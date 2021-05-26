@@ -15,17 +15,7 @@ class CreateProvincesTable extends Migration
     {
         Schema::create('provinces', function (Blueprint $table) {
             $table->bigIncrements('id');
-			
-			$table->bigInteger('barangay_id')->unsigned()->index()->nullable();
-			$table->foreign('barangay_id')->references('id')->on('barangays')->onDelete('cascade');
-			
-			$table->bigInteger('barangay_id')->unsigned()->index()->nullable();
-			$table->foreign('barangay_id')->references('id')->on('barangays')->onDelete('cascade');
-			
-			$table->bigInteger('barangay_id')->unsigned()->index()->nullable();
-			$table->foreign('barangay_id')->references('id')->on('barangays')->onDelete('cascade');
-			
-			
+			$table->string('name', 80);			
             $table->timestamps();
         });
     }
