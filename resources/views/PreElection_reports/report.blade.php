@@ -87,17 +87,33 @@ table.dataTable tbody tr.selected {
 								
 								
 								<tr >
-									<td width="22%"><label for="report_level" class="control-label" >Report Level</label></td>
+									<td width="22%"><label for="report_level" class="control-label" id="reportname" >Report Level</label></td>
 									<td width="2%">:</td>
 									<td colspan="2">
-										<select class="form-control input-sm" id="report_level" name="report_level" disabled="disabled" >
-											 <option value="">--- Level  ---</option>
-											 
-											 <option value="Province">Province</option>
-											 <option value="City">City</option>
-											 <option value="Barangay">Barangay</option>
-											 <option value="Precinct">Precinct</option>
-									    </select>
+									
+										<span id="typeLevel">
+											<select class="form-control input-sm" id="report_level" name="report_level" disabled="disabled" >
+												 <option value="">--- Level  ---</option>
+												 
+												 <option value="Province">Province</option>
+												 <option value="City">City</option>
+												 <option value="Barangay">Barangay</option>
+												 <option value="Precinct">Precinct</option>
+											</select>
+										</span>
+										
+										
+										<span id="BarangayCoordination" style="display:none">
+											<select class="form-control input-sm" id="barangayData" name="barangayData" >
+												 <option value="">--- All Barangay ---</option>
+												  @foreach($barangays as $barangay)
+														<option value="{{$barangay->id}}"    >{{$barangay->name}}</option>
+													@endforeach
+												
+											</select>
+										</span>
+										
+										
 									</td>
 									
 									<td> 
@@ -121,10 +137,18 @@ table.dataTable tbody tr.selected {
 										{
 											$("#report_level").val("");
 											$("#report_level").attr("disabled","disabled");
+											
+											$("#typeLevel").css("display","none");
+											$("#BarangayCoordination").css("display","block");
+											$("#reportname").empty().html('Select Barangay');
+											
 										}
 										else
 										{
 											$("#report_level").removeAttr('disabled');
+											$("#typeLevel").css("display","block");
+											$("#BarangayCoordination").css("display","none");
+											$("#reportname").empty().html('Report Level');
 										}
 									
 									});
@@ -305,7 +329,7 @@ function loadData(report_type)
 				url     : url,
                 type    : "POST",
                 headers :{"X-CSRF-TOKEN":$('meta[name="_token"]').attr('content')},
-                data	: {report_level:$("#report_level option:selected" ).val()},
+                data	: {report_level:$("#report_level option:selected" ).val(),barangayData:$("#barangayData option:selected" ).val()},
         		beforeSend:function(){
                      $("body").waitMe({
                         effect: 'timer',

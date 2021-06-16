@@ -37,30 +37,115 @@ class CampaignGroup_MemberController extends Controller
 		$city = $request->city;
 		$barangay = $request->barangay;
 		
+		$limit  	 = $request->input('length');
+		$start   	 = $request->input('start');
+		$dir 	     = $request->input('order.0.dir');
+		$search	 	 = $request->input('search.value');
+		$draw 		 = $request->input('draw');
+		
+		
 		$sel = "(SELECT COUNT(id) from campaign_group_members where group_id = t1.group_id) as number_of_members";
 		
-		$select ="t1.id,t1.group_id, name_coordinator.name as coordinator, t3.name as city, t4.name as barangay,t5.name as province,name_leader.name as leader,{$sel}";
-		$getallData = \DB::table('campaign_groups as t1')
-		->select(\DB::raw($select))
-			
+		$select ="t1.id,t1.group_id, name_coordinator.name as coordinator, t3.name as city, t4.name as barangay,t5.name as province,name_leader.name as leader";
+		$totalData = \DB::table('campaign_groups as t1')
+		->select(\DB::raw($select))	
 		->leftJoin('coordinators AS coordinator','coordinator.coordinator_id','=','t1.coordinator')
-		->leftJoin('votersinfomations AS name_coordinator','name_coordinator.vin_number','=','coordinator.vin_number')
+		->leftJoin('votersinfomations AS name_coordinator','name_coordinator.id','=','coordinator.user_id')
 		->leftJoin('cities AS t3','t3.id','=','t1.city')
 		->leftJoin('barangays AS t4','t4.id','=','t1.barangay')
 		->leftJoin('provinces AS t5','t5.id','=','t3.province_id')
 		->leftJoin('leaders AS leader','leader.leader_id','=','t1.leader')
-		->leftJoin('votersinfomations AS name_leader','name_leader.vin_number','=','leader.vin_number')
+		->leftJoin('votersinfomations AS name_leader','name_leader.id','=','leader.user_id')
 		->when(!empty($city), function ($q) use ($city) {
 			return $q->where('t1.city',$city);
 		})
 		->when(!empty($barangay), function ($q) use ($barangay) {
 			return $q->where('t1.barangay',$barangay);
 		})
+		->count();
 		
-		->get();
+		
+		if(empty($search))
+		{
+			
+			$select ="t1.id,t1.group_id, name_coordinator.name as coordinator, t3.name as city, t4.name as barangay,t5.name as province,name_leader.name as leader,{$sel}";
+			$getallData = \DB::table('campaign_groups as t1')
+			->select(\DB::raw($select))	
+			->leftJoin('coordinators AS coordinator','coordinator.coordinator_id','=','t1.coordinator')
+			->leftJoin('votersinfomations AS name_coordinator','name_coordinator.id','=','coordinator.user_id')
+			->leftJoin('cities AS t3','t3.id','=','t1.city')
+			->leftJoin('barangays AS t4','t4.id','=','t1.barangay')
+			->leftJoin('provinces AS t5','t5.id','=','t3.province_id')
+			->leftJoin('leaders AS leader','leader.leader_id','=','t1.leader')
+			->leftJoin('votersinfomations AS name_leader','name_leader.id','=','leader.user_id')
+			->when(!empty($city), function ($q) use ($city) {
+				return $q->where('t1.city',$city);
+			})
+			->when(!empty($barangay), function ($q) use ($barangay) {
+				return $q->where('t1.barangay',$barangay);
+			})
+			->offset($start)
+			->limit($limit)
+			->get();
+			
+			$totalFiltered = $totalData;
+		}
+		else{
+			
+			$select ="t1.id,t1.group_id, name_coordinator.name as coordinator, t3.name as city, t4.name as barangay,t5.name as province,name_leader.name as leader,{$sel}";
+			$getallData = \DB::table('campaign_groups as t1')
+			->select(\DB::raw($select))	
+			->leftJoin('coordinators AS coordinator','coordinator.coordinator_id','=','t1.coordinator')
+			->leftJoin('votersinfomations AS name_coordinator','name_coordinator.id','=','coordinator.user_id')
+			->leftJoin('cities AS t3','t3.id','=','t1.city')
+			->leftJoin('barangays AS t4','t4.id','=','t1.barangay')
+			->leftJoin('provinces AS t5','t5.id','=','t3.province_id')
+			->leftJoin('leaders AS leader','leader.leader_id','=','t1.leader')
+			->leftJoin('votersinfomations AS name_leader','name_leader.id','=','leader.user_id')
+			->when(!empty($city), function ($q) use ($city) {
+				return $q->where('t1.city',$city);
+			})
+			->when(!empty($barangay), function ($q) use ($barangay) {
+				return $q->where('t1.barangay',$barangay);
+			})
+			->where('name_coordinator.name','LIKE',"%{$search}%")
+			->orWhere('name_leader.name', 'LIKE',"%{$search}%")
+			->orWhere('t4.name', 'LIKE',"%{$search}%")
+			->offset($start)
+			->limit($limit)
+			->get();
+			
+			
+			
+			$select ="t1.id,t1.group_id, name_coordinator.name as coordinator, t3.name as city, t4.name as barangay,t5.name as province,name_leader.name as leader";
+			$totalFiltered = \DB::table('campaign_groups as t1')
+			->select(\DB::raw($select))	
+			->leftJoin('coordinators AS coordinator','coordinator.coordinator_id','=','t1.coordinator')
+			->leftJoin('votersinfomations AS name_coordinator','name_coordinator.id','=','coordinator.user_id')
+			->leftJoin('cities AS t3','t3.id','=','t1.city')
+			->leftJoin('barangays AS t4','t4.id','=','t1.barangay')
+			->leftJoin('provinces AS t5','t5.id','=','t3.province_id')
+			->leftJoin('leaders AS leader','leader.leader_id','=','t1.leader')
+			->leftJoin('votersinfomations AS name_leader','name_leader.id','=','leader.user_id')
+			->when(!empty($city), function ($q) use ($city) {
+				return $q->where('t1.city',$city);
+			})
+			->when(!empty($barangay), function ($q) use ($barangay) {
+				return $q->where('t1.barangay',$barangay);
+			})
+			->where('name_coordinator.name','LIKE',"%{$search}%")
+			->orWhere('name_leader.name', 'LIKE',"%{$search}%")
+			->orWhere('t4.name', 'LIKE',"%{$search}%")
+			->offset($start)
+			->limit($limit)
+			->count();
+			
+			
+		}
 		
 		
-
+		
+		
 		
 		$data = array();
 		
@@ -96,8 +181,15 @@ class CampaignGroup_MemberController extends Controller
 			$data = [];
 		}
 		
-		$output = array("data" => $data);
-		return response()->json($output);
+			$json_data = array(
+						"draw"            => intval($draw),  
+						"recordsTotal"    => intval($totalData),  
+						"recordsFiltered" => intval($totalFiltered), 
+						"data"            => $data,
+						);
+
+		
+		return response()->json($json_data);
 	}
 	
 	
@@ -112,7 +204,7 @@ class CampaignGroup_MemberController extends Controller
 		$search = $request->search;
 		
 		
-		$select ="t1.vin_number,t1.name,t1.dob,t1.address";
+		$select ="t1.id,t1.name,t1.dob,t1.address";
 		$getallData = \DB::table('votersinfomations as t1')
 		->select(\DB::raw($select))
 		
@@ -126,12 +218,12 @@ class CampaignGroup_MemberController extends Controller
 		
 		->where('t1.barangay', '=',$request->barangay)
 		->where('t1.city_municipality', '=',$request->city)
-		->groupBy('t1.vin_number')
+		->groupBy('t1.id')
 		->get();
 		
 		
 		
-		$select ="t1.vin_number";
+		$select ="t1.user_id";
 		$alreadymembers = \DB::table('campaign_group_members as t1')
 		->select(\DB::raw($select))
 		->get();
@@ -139,12 +231,12 @@ class CampaignGroup_MemberController extends Controller
 		$member_array = array();
 		foreach($alreadymembers as $members)
 		{
-			$member_array[] = $members->vin_number;
+			$member_array[] = $members->user_id;
 			
 		}
 		
 		
-		$select ="t1.vin_number";
+		$select ="t1.user_id";
 		$coordinators = \DB::table('coordinators as t1')
 		->select(\DB::raw($select))
 		->get();
@@ -152,11 +244,11 @@ class CampaignGroup_MemberController extends Controller
 		$member_coordinator = array();
 		foreach($coordinators as $members)
 		{
-			$member_coordinator[] = $members->vin_number;
+			$member_coordinator[] = $members->user_id;
 		}
 		
 		
-		$select ="t1.vin_number";
+		$select ="t1.user_id";
 		$leaders = \DB::table('leaders as t1')
 		->select(\DB::raw($select))
 		->get();
@@ -164,7 +256,7 @@ class CampaignGroup_MemberController extends Controller
 		$member_leaders = array();
 		foreach($leaders as $members)
 		{
-			$member_leaders[] = $members->vin_number;
+			$member_leaders[] = $members->user_id;
 		}
 		
 		
@@ -180,7 +272,7 @@ class CampaignGroup_MemberController extends Controller
 				
 				$name = $dd->name;
 				
-				if (in_array($dd->vin_number, $member_array))
+				if (in_array($dd->id, $member_array))
 				{
 					$checkbox =  '<i class="fa fa-fw fa-check-square"></i>';
 					
@@ -189,10 +281,10 @@ class CampaignGroup_MemberController extends Controller
 						->select(\DB::raw($select))
 						->leftJoin('campaign_groups AS t2','t2.group_id','=','t1.group_id')
 						->leftJoin('coordinators AS c','c.coordinator_id','=','t2.coordinator')
-						->leftJoin('votersinfomations AS coordinator','coordinator.vin_number','=','c.vin_number')
+						->leftJoin('votersinfomations AS coordinator','coordinator.id','=','c.user_id')
 						->leftJoin('leaders AS l','l.leader_id','=','t2.leader')
-						->leftJoin('votersinfomations AS leader','leader.vin_number','=','l.vin_number')
-						->where('t1.vin_number',$dd->vin_number)
+						->leftJoin('votersinfomations AS leader','leader.id','=','l.user_id')
+						->where('t1.user_id',$dd->id)
 						->first();
 					
 					$details =  "Assign as a Member";
@@ -206,14 +298,14 @@ class CampaignGroup_MemberController extends Controller
 					
 				
 				}
-				else if (in_array($dd->vin_number, $member_coordinator)) 
+				else if (in_array($dd->id, $member_coordinator)) 
 				{
 					
 					$checkbox =  '<i class="fa fa-fw fa-check-square"></i>**';					
 					$details =  "Assign as a Coordinator";
 					$name = '<a href="javascript:void(0)"  data-html="true" data-toggle="tooltip" data-placement="top" data-original-title= "'.$details.'" >'.$dd->name.'</a>';
 				}
-				else if (in_array($dd->vin_number, $member_leaders)) 
+				else if (in_array($dd->id, $member_leaders)) 
 				{
 					
 					$checkbox =  '<i class="fa fa-fw fa-check-square"></i>*';
@@ -223,8 +315,8 @@ class CampaignGroup_MemberController extends Controller
 						$getdata = \DB::table('leaders as t1')
 						->select(\DB::raw($select))
 						->leftJoin('coordinators AS c','c.coordinator_id','=','t1.coordinator')						
-						->leftJoin('votersinfomations AS coordinator','coordinator.vin_number','=','c.vin_number')
-						->where('t1.vin_number',$dd->vin_number)
+						->leftJoin('votersinfomations AS coordinator','coordinator.id','=','c.user_id')
+						->where('t1.user_id',$dd->id)
 						->first();
 					
 					
@@ -237,7 +329,7 @@ class CampaignGroup_MemberController extends Controller
 				}
 				else 
 				{
-					$checkbox =  '<input type="checkbox" id="selected_checkbox" name="selected_checkbox"  data-vin_number="'.$dd->vin_number.'" data-name="'.$dd->name.'" >';
+					$checkbox =  '<input type="checkbox" id="selected_checkbox" name="selected_checkbox"  data-vin_number="'.$dd->id.'" data-name="'.$dd->name.'" >';
 				}
 	
 	
@@ -245,7 +337,7 @@ class CampaignGroup_MemberController extends Controller
 				
 				
 				$row['checkbox'] = $checkbox;
-				$row['vin_number'] = $dd->vin_number;
+				$row['vin_number'] = $dd->id;
 				
 				
 				
@@ -280,10 +372,10 @@ class CampaignGroup_MemberController extends Controller
 		 //re-able ONLY_FULL_GROUP_BY
 		\DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
 		
-		$select ="t1.leader_id,t2.name,t2.vin_number";
+		$select ="t1.leader_id,t2.name,t2.id";
 		$getcoordinator = \DB::table('leaders as t1')
 		->select(\DB::raw($select))
-		->join('votersinfomations as t2','t2.vin_number','=','t1.vin_number')
+		->join('votersinfomations as t2','t2.id','=','t1.user_id')
 		->where('t1.coordinator', '=',$request->coordinator)
 		->get();
 	
@@ -316,7 +408,7 @@ class CampaignGroup_MemberController extends Controller
 			
 				$campaign_group_members = new campaign_group_members(); 
 				$campaign_group_members->group_id       =  $request->GroupId;
-				$campaign_group_members->vin_number     =  $data['vin_number'];
+				$campaign_group_members->user_id        =  $data['vin_number'];
 				$campaign_group_members->save();	
 			
 		}
@@ -340,7 +432,7 @@ class CampaignGroup_MemberController extends Controller
 				
 					$campaign_group_members = new campaign_group_members(); 
 					$campaign_group_members->group_id       =  $request->GroupId;
-					$campaign_group_members->vin_number     =  $data['vin_number'];
+					$campaign_group_members->user_id        =  $data['vin_number'];
 					$campaign_group_members->save();	
 				}
 			}
@@ -350,7 +442,7 @@ class CampaignGroup_MemberController extends Controller
 		if(!empty($request->delete_item_array)){
 		
 			foreach($request->delete_item_array as $dd){
-				campaign_group_members::where('vin_number',$dd['vin_number'])
+				campaign_group_members::where('user_id',$dd['vin_number'])
 				->where('id',$dd['id'])
 				->where('group_id',$request->GroupId)
 				->delete();	
@@ -383,12 +475,12 @@ class CampaignGroup_MemberController extends Controller
 		$details = \DB::table('campaign_groups as t1')
 		->select(\DB::raw($select))
 		->leftJoin('coordinators AS coordinator','coordinator.coordinator_id','=','t1.coordinator')
-		->leftJoin('votersinfomations AS name_coordinator','name_coordinator.vin_number','=','coordinator.vin_number')
+		->leftJoin('votersinfomations AS name_coordinator','name_coordinator.id','=','coordinator.user_id')
 		->leftJoin('cities AS t3','t3.id','=','t1.city')
 		->leftJoin('barangays AS t4','t4.id','=','t1.barangay')
 		->leftJoin('provinces AS t5','t5.id','=','t3.province_id')
 		->leftJoin('leaders AS leader','leader.leader_id','=','t1.leader')
-		->leftJoin('votersinfomations AS name_leader','name_leader.vin_number','=','leader.vin_number')
+		->leftJoin('votersinfomations AS name_leader','name_leader.id','=','leader.user_id')
 		->where('t1.group_id','=',$group_id)
 		->where('t1.id','=',$id)
 		->first();
@@ -396,10 +488,10 @@ class CampaignGroup_MemberController extends Controller
 		
 
 		
-		$select ="t1.id,t1.group_id, t2.name as member,t2.vin_number";
+		$select ="t1.id,t1.group_id, t2.name as member,t2.id as user_id";
 		$getallData = \DB::table('campaign_group_members as t1')
 		->select(\DB::raw($select))
-		->leftJoin('votersinfomations AS t2','t2.vin_number','=','t1.vin_number')
+		->leftJoin('votersinfomations AS t2','t2.id','=','t1.user_id')
 		->where('t1.group_id','=',$group_id)
 		->get();
 		
@@ -417,8 +509,8 @@ class CampaignGroup_MemberController extends Controller
 				$row['id'] = $dd->id;
 				$row['group_id'] = $dd->group_id;
 				$row['member'] = $dd->member;
-				$row['vin_number'] = $dd->vin_number;
-				$row['delete'] = "<input type='checkbox' name='delete_row' id='delete_row' data-vin_number='".$dd->vin_number."'  data-id=".$dd->id." data-group_id=".$dd->group_id."  />";
+				$row['vin_number'] = $dd->user_id;
+				$row['delete'] = "<input type='checkbox' name='delete_row' id='delete_row' data-vin_number='".$dd->user_id."'  data-id=".$dd->id." data-group_id=".$dd->group_id."  />";
 				$data[] = $row;
 			}
 		}

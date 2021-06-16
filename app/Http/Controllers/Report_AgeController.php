@@ -284,20 +284,20 @@ class Report_AgeController extends Controller
 							
 							
 										$coordinators = "( SELECT COUNT(a.coordinator_id) from coordinators as a 
-														   LEFT JOIN  votersinfomations as b ON b.vin_number = a.vin_number
+														   LEFT JOIN  votersinfomations as b ON b.id = a.user_id
 														   where a.city = t1.city_municipality  AND 														   
 														   TIMESTAMPDIFF(YEAR, DATE(b.dob),current_date) between {$min} and {$max}
 														 ) as coordinators ";
 														 
 										$leaders = "( SELECT COUNT(a.leader_id) from leaders as a 
-														   LEFT JOIN  votersinfomations as b ON b.vin_number = a.vin_number
+														   LEFT JOIN  votersinfomations as b ON b.id = a.user_id
 														   where a.city = t1.city_municipality  AND 
 															TIMESTAMPDIFF(YEAR, DATE(b.dob),current_date) between {$min} and {$max}
 														 ) as leaders ";				 
 										
 										$members      = "(SELECT COUNT(b.id) from campaign_groups as a 
 														   LEFT JOIN  campaign_group_members as b ON a.group_id = b.group_id
-														   LEFT JOIN  votersinfomations as c ON c.vin_number = b.vin_number
+														   LEFT JOIN  votersinfomations as c ON c.id = b.user_id
 														   where a.city = t1.city_municipality AND 
 														   TIMESTAMPDIFF(YEAR, DATE(c.dob),current_date) between {$min} and {$max}
 														 ) as members ";
@@ -575,20 +575,20 @@ class Report_AgeController extends Controller
 							
 							
 										$coordinators = "( SELECT COUNT(a.coordinator_id) from coordinators as a 
-														   LEFT JOIN  votersinfomations as b ON b.vin_number = a.vin_number
+														   LEFT JOIN  votersinfomations as b ON b.id = a.user_id
 														   where a.city = t1.city_municipality  AND 														   
 														   TIMESTAMPDIFF(YEAR, DATE(b.dob),current_date) between {$min} and {$max}
 														 ) as coordinators ";
 														 
 										$leaders = "( SELECT COUNT(a.leader_id) from leaders as a 
-														   LEFT JOIN  votersinfomations as b ON b.vin_number = a.vin_number
+														   LEFT JOIN  votersinfomations as b ON b.id = a.user_id
 														   where a.city = t1.city_municipality  AND 
 															TIMESTAMPDIFF(YEAR, DATE(b.dob),current_date) between {$min} and {$max}
 														 ) as leaders ";				 
 										
 										$members      = "(SELECT COUNT(b.id) from campaign_groups as a 
 														   LEFT JOIN  campaign_group_members as b ON a.group_id = b.group_id
-														   LEFT JOIN  votersinfomations as c ON c.vin_number = b.vin_number
+														   LEFT JOIN  votersinfomations as c ON c.id = b.user_id
 														   where a.city = t1.city_municipality AND 
 														   TIMESTAMPDIFF(YEAR, DATE(c.dob),current_date) between {$min} and {$max}
 														 ) as members ";
@@ -873,20 +873,20 @@ class Report_AgeController extends Controller
 							
 							
 										$coordinators = "( SELECT COUNT(a.coordinator_id) from coordinators as a 
-														   LEFT JOIN  votersinfomations as b ON b.vin_number = a.vin_number
+														   LEFT JOIN  votersinfomations as b ON b.id = a.user_id
 														   where a.barangay = t1.barangay  AND 														   
 														   TIMESTAMPDIFF(YEAR, DATE(b.dob),current_date) between {$min} and {$max}
 														 ) as coordinators ";
 														 
 										$leaders = "( SELECT COUNT(a.leader_id) from leaders as a 
-														   LEFT JOIN  votersinfomations as b ON b.vin_number = a.vin_number
+														   LEFT JOIN  votersinfomations as b ON b.id = a.user_id
 														   where a.barangay = t1.barangay  AND 
 															TIMESTAMPDIFF(YEAR, DATE(b.dob),current_date) between {$min} and {$max}
 														 ) as leaders ";				 
 										
 										$members      = "(SELECT COUNT(b.id) from campaign_groups as a 
 														   LEFT JOIN  campaign_group_members as b ON a.group_id = b.group_id
-														   LEFT JOIN  votersinfomations as c ON c.vin_number = b.vin_number
+														   LEFT JOIN  votersinfomations as c ON c.id = b.user_id
 														   where a.barangay = t1.barangay AND 
 														   TIMESTAMPDIFF(YEAR, DATE(c.dob),current_date) between {$min} and {$max}
 														 ) as members ";
@@ -1244,20 +1244,20 @@ class Report_AgeController extends Controller
 							
 							
 											$coordinators = "( SELECT COUNT(a.coordinator_id) from coordinators as a 
-															   LEFT JOIN  votersinfomations as b ON b.vin_number = a.vin_number
+															   LEFT JOIN  votersinfomations as b ON b.id = a.user_id
 															   where b.precint_number = t1.precint_number  AND 														   
 															   TIMESTAMPDIFF(YEAR, DATE(b.dob),current_date) between {$min} and {$max}
 															 ) as coordinators ";
 															 
 											$leaders = "( SELECT COUNT(a.leader_id) from leaders as a 
-															   LEFT JOIN  votersinfomations as b ON b.vin_number = a.vin_number
+															   LEFT JOIN  votersinfomations as b ON b.id = a.user_id
 															   where b.precint_number = t1.precint_number  AND 
 																TIMESTAMPDIFF(YEAR, DATE(b.dob),current_date) between {$min} and {$max}
 															 ) as leaders ";				 
 											
 											$members      = "(SELECT COUNT(b.id) from campaign_groups as a 
 															   LEFT JOIN  campaign_group_members as b ON a.group_id = b.group_id
-															   LEFT JOIN  votersinfomations as c ON c.vin_number = b.vin_number
+															   LEFT JOIN  votersinfomations as c ON c.id = b.user_id
 															   where c.precint_number = t1.precint_number AND 
 															   TIMESTAMPDIFF(YEAR, DATE(c.dob),current_date) between {$min} and {$max}
 															 ) as members ";

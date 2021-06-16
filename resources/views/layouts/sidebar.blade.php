@@ -15,13 +15,13 @@
 	<li id='dashboard' >
 		<a href="{{ url('dashboard') }}" ><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
 	</li>
-	@endif;
+	@endif
 	
 	@if($voters_database  == 1)
 	<li id='database' >
 		<a href="{{ url('database/voters') }}" ><i class="fa fa-fw fa-list"></i> <span>Voters Database</span></a>
 	</li>
-	@endif;
+	@endif
 	
 	
 	@if($master_data  == 1)
@@ -37,21 +37,21 @@
             <li id="LocationInfo"><a href="{{ url('locationInfo/province') }}" ><i class="fa fa-fw fa-map-pin"></i> Location Info </a></li>
           </ul>
 	</li>
-	@endif;
+	@endif
 	
 	 <!--<li id='campaign' ><a href="{{ url('campaign-periods') }}" ><i class="fa fa-fw fa-folder-open"></i> <span>Campaign Group period</span></a></li>-->
 	
 	@if($campaign_group  == 1)
 		<li id='campaign_groups' ><a href="{{ url('campaign-groups/coordinator') }}" ><i class="fa fa-fw fa-users"></i> <span>Campaign Group</span></a></li>
-	@endif;
+	@endif
 	
 	@if($election_turnout  == 1)
 	<li id='turnout' ><a href="{{ url('/turnout') }}" ><i class="fa fa-fw fa-file-text-o"></i> <span>Election Turnout</span></a></li>
-	@endif;
+	@endif
 	
 	@if($election_reports  == 1)
 	<li id='election_reports' ><a href="{{ url('/reports') }}" ><i class="fa fa-fw fa-bar-chart-o"></i> <span>Election Reports</span></a></li>
-	@endif;
+	@endif
 	
 	
   </ul>

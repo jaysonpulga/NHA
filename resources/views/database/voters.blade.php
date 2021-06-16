@@ -252,7 +252,7 @@ function loadMainAccount()
 	table =  $('#mainDatatables').DataTable({ 
 	"order":[],
 	"processing": true, //Feature control the processing indicator.
-	//"serverSide": true,
+	"serverSide": true,
 	// Load data for the table's content from an Ajax source
 	/*
 	'language': {
@@ -269,7 +269,7 @@ function loadMainAccount()
 	  "scrollCollapse": true,
 	  "bDestroy": true,
 	  "aLengthMenu": [[5,10, 15, 25, 50, 75, -1], [5,10, 15, 25, 50, 75, "All"]],
-        "iDisplayLength": 25,
+      "iDisplayLength": 10,
 	"columns"    : [
 		{'data': 'vin_number'},
 		{'data': 'name'},
@@ -379,13 +379,35 @@ $('#mainDatatables tbody').on('click', 'tr', function () {
 	}
 	
 	
-	$("#hiddenid").val(data['complete_vin_number']);
+
+	
+	
+	$("#hiddenid").val(data['user_id']);
 	$('#editinfo').attr('data-address', data['complete_address']);
 	$('#editinfo').attr('data-mobile_number', data['mobile_number']);
 	$('#editinfo').attr('data-status', data['status']);
 	$('#editinfo').attr('data-remarks', data['remarks']);
 	$('#editinfo').attr('data-religion_id', data['religion_id']);
 	$('#editinfo').attr('data-religion', data['religion']);
+
+	if(data['dob'] != "")
+	{
+		$('#editinfo').attr('data-dob', data['dob']);
+	}
+	else
+	{
+		$('#editinfo').attr('data-dob', "undefined");
+	}
+	
+	
+	if(data['gender'] != "")
+	{
+		$('#editinfo').attr('data-gender', data['gender']);
+	}
+	else
+	{
+		$('#editinfo').attr('data-gender', "undefined");
+	}
 	
 	$("#editpanel").css('display','block');
 	$("#closed").css('display','inline');
@@ -406,7 +428,6 @@ $('#mainDatatables tbody').on('click', 'tr', function () {
 
 <script type="text/javascript">
 $(document).on('click', '#editinfo', function(e){
-e.preventDefault(); 
 
 	var address = $(this).data("address");
 	var mobile_number = $(this).data("mobile_number");
@@ -414,15 +435,40 @@ e.preventDefault();
 	var remarksx = $(this).data("remarks");
 	var religion_id = $(this).data("religion_id");
 	var religion = $(this).data("religion");
+	var dob = $(this).attr("data-dob");
+	var gender = $(this).attr("data-gender");
+
 	
+
+	var dobtag = "";
+	if(dob == "undefined")
+	{
+		$("#dob").empty().html('<input type="date"  required class="form-control" id="modify_dob" name="modify_dob"  />');
+		dobtag = 'data-editdob="'+dob+'" ';
+	}
+	else{
+		
+		dobtag = 'data-editdob="'+dob+'" ';
+	}
+	
+	
+	var gendertag = "";
+	if(gender == "undefined")
+	{
+		$("#sex").empty().html('<select  class="form-control" id="modify_gender" name="modify_gender" required><option value="">Select Gender</option><option value="M">Male</option><option value="F">Female</option></select>');
+		gendertag = 'data-editgender="'+gender+'" ';
+	}
+	else{
+		
+		gendertag = 'data-editgender="'+gender+'" ';
+	}
+	
+
 	
 	$("#address").empty().html('<input type="text"  required class="form-control" id="modify_address" name="modify_address" value="'+address+'" />');
 	$("#mobile_number").empty().html('<input type="number"  class="form-control" id="modify_mobile_number" name="modify_mobile_number" value="'+mobile_number+'" />');
 	
 	$("#status").empty().html('<select  class="form-control" id="modify_status" name="modify_status"><option value="0">ACTIVE</option><option value="1">DECEASED</option><option value="2">ABROAD</option></select>');
-	
-	
-	
 	
 	
 	$("#modify_status").val(status);
@@ -432,7 +478,7 @@ e.preventDefault();
 	$("#closed").css('display','none');
 	$("#saveData").css('display','inline');
 	
-	$("#cancel").empty().html('<button id="cancel_edit_info"  type="button" class="btn btn-default"  data-add="'+address+'"  data-mn="'+mobile_number+'"  data-status="'+status+'" data-remarks="'+remarksx+'" data-religion="'+religion+'"  >Cancel</button>')
+	$("#cancel").empty().html('<button id="cancel_edit_info"  type="button" class="btn btn-default"  data-add="'+address+'"  data-mn="'+mobile_number+'"  data-status="'+status+'" data-remarks="'+remarksx+'" data-religion="'+religion+'"  '+dobtag+' '+gendertag+'  >Cancel</button>')
 	
 	
 	$("#religion_value").empty().css('display','none');
@@ -450,6 +496,8 @@ e.preventDefault();
 
 	var address = $(this).data("add");
 	var mobile_number = $(this).data("mn");
+	var editdob = $(this).data("editdob");
+	var editgender = $(this).data("editgender");
 	
 	var status = $(this).data("status");
 	var remarks = $(this).data("remarks");
@@ -460,7 +508,20 @@ e.preventDefault();
 	{
 		religion = "";
 	}
-
+	
+	if(editdob == "undefined")
+	{
+		$("#dob").empty().html('');
+		
+	}
+	
+	
+	if(editgender == "undefined")
+	{
+		$("#sex").empty().html('');
+		
+	}
+	
 	   
 	$("#address").empty().html(address);
 	$("#mobile_number").empty().html(mobile_number);

@@ -181,65 +181,58 @@
 <section class="content">
 <!-- Main row -->
 <div class="row">
-
-
+	
 	<?php
+
+		$TotalprojectedVoters_percentage = number_format (($TotalprojectedVoters * 100) / $TotalVoters ,2);
+
+		$age18to30_percentage = number_format (($ChartAge->Young * 100) / $TotalVoters ,2);
+		$age31to45_percentage = number_format (($ChartAge->Middle * 100) / $TotalVoters ,2);
+		$age46to59_percentage = number_format (($ChartAge->OLD * 100) / $TotalVoters ,2);
+		$age60plus_percentage = number_format (($ChartAge->SeniorCitizens * 100) / $TotalVoters ,2);
 
 		$male_percentage = number_format (($ChartSex->Male * 100) / $TotalVoters ,2);
 		$female_percentage = number_format (($ChartSex->Female * 100) / $TotalVoters ,2);
-		
+
 		$voterMemberMale_percentage = number_format (($ChartSex->voterMemberMale * 100) / $TotalVoters ,2);
 		$voterMemberFemale_percentage = number_format (($ChartSex->voterMemberFemale * 100) / $TotalVoters ,2);
-			
-		$age18to30_percentage = number_format (($ChartAge->age18to30 * 100) / $TotalVoters ,2);
-		$age31to45_percentage = number_format (($ChartAge->age31to45 * 100) / $TotalVoters ,2);
-		$age46to59_percentage = number_format (($ChartAge->age46to59 * 100) / $TotalVoters ,2);
-		$age60plus_percentage = number_format (($ChartAge->age60plus * 100) / $TotalVoters ,2);
 		
 		
-		$TotalprojectedVoters_percentage = number_format (($TotalprojectedVoters * 100) / $TotalVoters ,2);
-		
-	?>		
-	
+	?>
 
-	
+
 	<div class="col-lg-8">
-	
-	
-	<!-- MAIN GROUP-->
-	  <!-- VOTERS AGE -->
-	  
 
-	  <div class="box box-default">
-		<div class="box-body">
-		    <div class="row">
-				<div class="col-lg-3">
-					<h4>Projected Votes</h4>
-					<center><img src="{{ asset('public/image/nominee.png') }}" alt="nominee" width="70%"  class="img-responsive"/></center>
-				</div>
-				<div class="col-lg-4">
-					<br>
-					<div>
-						<span style="font-size:30px;font-weight:bold;color:#46bdc3">{{ $TotalVoters }}</span><br>
-						<span style="font-size:20px;font-weight:normal;color:#5a5858">Total Voters</span>
+		  <div class="box box-default">
+			<div class="box-body">
+				<div class="row">
+					<div class="col-lg-3">
+						<h4>Projected Votes</h4>
+						<center><img src="{{ asset('image/nominee.png') }}" alt="nominee" width="70%"  class="img-responsive"/></center>
 					</div>
-					<div>
-						<span style="font-size:30px;font-weight:bold;color:#007bc9">{{ $TotalprojectedVoters }}</span><br>
-						<span style="font-size:20px;font-weight:normal;color:#5a5858">Total Projected Votes</span>
+					<div class="col-lg-4">
+						<br>
+						<div>
+							<span style="font-size:30px;font-weight:bold;color:#46bdc3">{{ $TotalVoters }}</span><br>
+							<span style="font-size:20px;font-weight:normal;color:#5a5858">Total Voters</span>
+						</div>
+						<div>
+							<span style="font-size:30px;font-weight:bold;color:#007bc9">{{ $TotalprojectedVoters }}</span><br>
+							<span style="font-size:20px;font-weight:normal;color:#5a5858">Total Projected Votes</span>
+						</div>
 					</div>
-				</div>
-				<div class="col-lg-5">
-					<div id="donut-chart" style="height:130px;"></div>
-					<center style="margin-top:5px">
-						<span style="font-size:18px;color:#007bc9;font-weight:bold;" id="percentvoters">{{$TotalprojectedVoters_percentage}}% Total Projected Votes</span>
-					</center>
+					<div class="col-lg-5">
+						<div id="donut-chart" style="height:130px;"></div>
+						<center style="margin-top:5px">
+							<span style="font-size:18px;color:#007bc9;font-weight:bold;" id="percentvoters">{{$TotalprojectedVoters_percentage}}% Total Projected Votes</span>
+						</center>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	  
-	  <!-- VOTERS AGE -->
+
+		<!-- VOTERS AGE -->
 	  <div class="box box-default">
 		<div class="box-header">
 		  <h4>Voters' Age</h4>
@@ -250,22 +243,22 @@
 				<tr>
 					<td class="centerText">
 					<center>
-						<img src="{{ asset('public/image/age18-30.png') }}" alt="age18-30" width="55%" class="img-responsive"  />
+						<img src="{{ asset('image/age18-30.png') }}" alt="age18-30" width="55%" class="img-responsive"  />
 					</center>	
 					</td>
 					<td class="centerText">
 					<center>
-						<img src="{{ asset('public/image/age31-45.png') }}" alt="age18-30" width="55%" class="img-responsive" />
+						<img src="{{ asset('image/age31-45.png') }}" alt="age18-30" width="55%" class="img-responsive" />
 					</center>		
 					</td>
 					<td class="centerText">
 					<center>
-						<img src="{{ asset('public/image/age46-59.png') }}" alt="age18-30" width="55%" class="img-responsive" />
+						<img src="{{ asset('image/age46-59.png') }}" alt="age18-30" width="55%" class="img-responsive" />
 					</center>		
 					</td>
 					<td class="centerText">
 					<center>
-						<img src="{{ asset('public/image/age60+.png') }}" alt="age18-30" width="55%" class="img-responsive"  />
+						<img src="{{ asset('image/age60+.png') }}" alt="age18-30" width="55%" class="img-responsive"  />
 					</center>	
 					</td>
 				</tr>
@@ -327,10 +320,10 @@
 				
 			
 				<tr>
-					<td class="centerText2"><span>Young Adults</span><br><span class="ageCount">{{ @$ChartAge->age18to30 }}</span></td>
-					<td class="centerText2"><span>Middle-Age Adults</span><br><span class="ageCount">{{ @$ChartAge->age31to45 }}</span></td>
-					<td class="centerText2"><span>Old-Age Adults</span><br><span class="ageCount">{{ @$ChartAge->age46to59 }}</span></td>
-					<td class="centerText2"><span>Senior Citizens</span><br><span class="ageCount">{{ @$ChartAge->age60plus }}</span></td>
+					<td class="centerText2"><span>Young Adults</span><br><span class="ageCount">{{ @$ChartAge->Young }}</span></td>
+					<td class="centerText2"><span>Middle-Age Adults</span><br><span class="ageCount">{{ @$ChartAge->Middle }}</span></td>
+					<td class="centerText2"><span>Old-Age Adults</span><br><span class="ageCount">{{ @$ChartAge->OLD }}</span></td>
+					<td class="centerText2"><span>Senior Citizens</span><br><span class="ageCount">{{ @$ChartAge->SeniorCitizens }}</span></td>
 				</tr>
 				
 			</table>
@@ -339,10 +332,11 @@
 		</div>
 		<!-- /.box-body -->
 	  </div>
-	  
 
-	</div>	  
-	
+
+	</div><!-- end col-lg-8 -->
+
+
 	<div class="col-lg-4">	
 
 	
@@ -400,7 +394,7 @@
 	  </div>
 	  <!-- /.box -->
 
-		
+
 	 <!-- PIE  CHART -->
 	  <div class="box box-default">
 		<div class="box-header">
@@ -412,43 +406,32 @@
 		<!-- /.box-body -->
 	  </div>
 	  <!-- /.box -->
+		
+
+
+	</div><!-- end col-lg-4 -->
 
 
 
-
-	</div>
-	
 	
 	
 	<!-- VOTERS JOIN -->
 	<div class="col-lg-12">
 		<div class="box box-default">
 			<div class="box-body">
-			<div id="barStackedChart" style="height:450px; width: 100%; "></div>
+				<div id="barStackedChart" style="height:600px; width: 100%; "></div>
 			</div>
 		</div>
 	</div>
 	
 	
 
-	
-	<!-- VOTERS JOIN -->
-	<!--
-	<div class="col-lg-12">
-		<div class="box box-default">
-			<div class="box-body">
-			<div class="chartContainer" style="height: 300px; width: 100%; "></div>
-			</div>
-		</div>
-	</div>
-	-->
-	
-	
-	
+
 </div>
 <!-- /.row (main row) -->
 </section>
 <!-- /.content -->
+
 
 
 <!-- ChartJS 1.0.1 -->
@@ -466,9 +449,46 @@
 <script  src="{{ asset('adminlte/plugins/chartjs/canvasChart.js')}}"></script>
 
 
-<?php
-//print_r($dataReligion);
-?>
+
+
+<!-- 1st GRAPH -->
+<script>
+$(function () {
+	
+	 var donutData = [
+      
+      {label: "Total Projected Voters", data: "{{ $TotalprojectedVoters }}", color: "#007bc9"},
+	  {label: "Total Voters", data: "{{ $TotalVoters }}", color: "#bcdedf"},
+
+    ];
+    $.plot("#donut-chart", donutData, {
+      series: {
+        pie: {
+          show: true,
+          radius: 1,
+          innerRadius: 0.5,
+          label: {
+            show: true,
+            radius: 2 / 3,
+            formatter: labelFormatter,
+            threshold: 0.1
+          }
+
+        }
+      },
+      legend: {
+        show: false
+      }
+    });
+	
+	
+	 function labelFormatter(label, series) {
+		 return ''
+		
+	}
+
+});		
+</script>
 
 
 <script>
@@ -507,11 +527,10 @@ var pieOptions  = {
 }
 </script>
 
-
 <script>
 $(function () {
 	
-var Religions = <?php echo json_encode($dataReligion); ?>;
+var Religions = <?php echo json_encode(@$dataReligion); ?>;
 //console.log(Religions);
 
 
@@ -524,8 +543,6 @@ $.each(Religions, function(index, value) {
    count.push(value['count']);
    rel.push(index+' : '+value['percentage']+'%');
 });
-
-
 
    var balancesheetData = {
 	   
@@ -558,94 +575,51 @@ $.each(Religions, function(index, value) {
 
 
 <script>
-$(function () {
+window.onload = function () {
 	
-	
-	 var donutData = [
-      
-      {label: "Total Projected Voters", data: "{{ $TotalprojectedVoters }}", color: "#007bc9"},
-	  {label: "Total Voters", data: "{{ $TotalVoters }}", color: "#bcdedf"},
-
-    ];
-    $.plot("#donut-chart", donutData, {
-      series: {
-        pie: {
-          show: true,
-          radius: 1,
-          innerRadius: 0.5,
-          label: {
-            show: true,
-            radius: 2 / 3,
-            formatter: labelFormatter,
-            threshold: 0.1
-          }
-
-        }
-      },
-      legend: {
-        show: false
-      }
-    });
-	
-	
-	 function labelFormatter(label, series) {
-		 return ''
+		$.ajax({
+		url: "{{ asset('BarangayData') }}",
+		type : 'POST',
+		headers:{'X-CSRF-TOKEN':$('meta[name="_token"]').attr('content')},
+		beforeSend:function(){
+			
+			 $("#barStackedChart").waitMe({
+				effect: 'timer',
+				text: 'Loading Please Wait ........ ',
+				bg: 'rgba(255,255,255,0.90)',
+				color: '#555'
+			}); 
+		},
+		success:function(data){
+			$('#barStackedChart').waitMe('hide');
+			
+			DisplayBarData(data);
 		
-	}
-	
+		},
+		error:function(){
+			$('#barStackedChart').waitMe('hide');
 
-});		
-</script>
-
-<script type="text/javascript">
-/*
-$(function() {
-	$(".chartContainer").CanvasJSChart({
-		title: {
-			text: "Projected Votes - 2021"
-		},
-		axisY: {
-			title: "Projected Votes",
-			includeZero: false
-		},
-		axisX: {
-			interval: 1
-		},
-		data: [
-		{
-			type: "line", //try changing to column, area
-			toolTipContent: "{label}: {y}",
-			dataPoints: [
-				{ label: "January",   y: {{@$MonthChart['January']->data}}    },
-				{ label: "February",  y: {{@$MonthChart['February']->data}}  },
-				{ label: "March",	  y: {{@$MonthChart['March']->data}} 	 },
-				{ label: "April",     y: {{@$MonthChart['April']->data}}     },
-				{ label: "May",       y: {{@$MonthChart['May']->data}}       },
-				{ label: "June",      y: {{@$MonthChart['June']->data}}      },
-				{ label: "July",      y: {{@$MonthChart['July']->data}}      },
-				{ label: "August",    y: {{@$MonthChart['August']->data}}    },
-				{ label: "September", y: {{@$MonthChart['September']->data}} },
-				{ label: "October",   y: {{@$MonthChart['October']->data}}   },
-				{ label: "November",  y: {{@$MonthChart['November']->data}}  },
-				{ label: "December",  y: {{@$MonthChart['December']->data}}  }
-			]
 		}
-		]
+				
 	});
 	
 	
-	$(".canvasjs-chart-credit").css('display','none');
-});
-*/
+
+	
+	
+
+
+}
+
+
 </script>
 
 
-
 <script>
-window.onload = function () {
+
+function DisplayBarData(barangays){
 	
-var barangays = <?php echo json_encode($barangays); ?>;
-console.log(barangays);
+	console.log(barangays);
 	
 var Members = [];
 var Leaders = [];
@@ -658,17 +632,18 @@ $.each(barangays, function(index, value) {
 
 	Coordinators.push({
 		y: value['coordinators'],
-		label : value['name']
+		label : value['barangay'] + ":" + value['total_voters'],
+	
 	});
 
 	Leaders.push({
 		y: value['leaders'],
-		label : value['name']
+		label : value['barangay'] + ":" + value['total_voters'],
 	});
 
 	Members.push({
 		y: value['members'],
-		label : value['name']
+		label : value['barangay'] + ":" + value['total_voters'],
 	});
 
 
@@ -679,7 +654,7 @@ $.each(barangays, function(index, value) {
 
 });
 
-console.log(Members);
+console.log("Members =" +Members);
 
 
 //Better to construct options first and then pass it as a parameter
@@ -698,9 +673,20 @@ var options = {
 	
 	axisX:{
 		reversed: true,
+			labelWrap: false,   // change it to false
+			interval: 1,
+		labelFontSize: 12,
+
+		contentFormatter: function ( e ) {
+			return  e.label; 
+		} 
+
+
 	},
 	axisY:{
 		includeZero: true,
+		labelFontSize: 12,
+	
 	},
 	
 	  
@@ -717,14 +703,13 @@ var options = {
 		  var tooltip = "";
 		  
           for (var i = 0; i < e.entries.length; i++){
-			 label =  e.entries[i].dataPoint.label+"<br>";
+
+			 label =  e.entries[i].dataPoint.label;
 			 
 			  
             var  temp = "<br>"+e.entries[i].dataSeries.name + "- <span>"+  e.entries[i].dataPoint.y + "</span>"; 
             tot = tot + e.entries[i].dataPoint.y;
-			label =  e.entries[i].dataPoint.label;
-			
-			
+
 			str = str.concat(temp);
           }
 		  var total = "<br> Total : " + "<strong>"+  tot + "</strong>"; 
@@ -755,7 +740,6 @@ var options = {
 	{
 		type: "stackedBar",
 		name: "Coordinators",
-		xValueFormatString: "#total",
 		showInLegend: true, 
 		cursor: "pointer",
 		dataPoints: Coordinators
@@ -764,7 +748,6 @@ var options = {
 	{
 		type: "stackedBar",
 		name: "Leaders",
-		xValueFormatString: "#total",
 		showInLegend: true, 
 		cursor: "pointer",	
 		dataPoints:Leaders
@@ -774,7 +757,6 @@ var options = {
 	{
 		type: "stackedBar",
 		name: "Members",
-		xValueFormatString: "#total",
 		showInLegend: true, 
 		cursor: "pointer",
 		//indexLabel: "#total",
@@ -806,6 +788,8 @@ var options = {
 	
 	
 	]
+	
+	
 };
 
 
@@ -822,24 +806,13 @@ function toggleDataSeries(e) {
 }
 
 
-	$("#barStackedChart").CanvasJSChart(options);
-	$(".canvasjs-chart-credit").css('display','none');
+$("#barStackedChart").CanvasJSChart(options);
+$(".canvasjs-chart-credit").css('display','none');
 	
-	
-	
-	
-
 }
 
 
-
-
 </script>
-
-
-
-
-
 
 
 

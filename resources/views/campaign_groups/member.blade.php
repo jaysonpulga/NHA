@@ -398,7 +398,8 @@ function loadMainAccount()
 {
 	table =  $('#mainDatatables').DataTable({ 
 	"order":[],
-	"processing": true, //Feature control the processing indicator.	
+	"processing": true, //Feature control the processing indicator.
+	"serverSide": true,
 	"ajax": {
 			url: "{{asset('loadAllCampaignGroup')}}",
 			type    : "POST",

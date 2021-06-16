@@ -223,7 +223,7 @@ function loadMainAccount()
 	table =  $('#mainDatatables').DataTable({ 
 	"order":[],
 	"processing": true, //Feature control the processing indicator.
-	
+	"serverSide": true,
 	"ajax": {
 			url: "{{asset('LoadCoordinator')}}",
 			type    : "POST",
@@ -247,7 +247,7 @@ function loadMainAccount()
 	  "bDestroy": true,
 	  "aLengthMenu": [[5,10, 15, 25, 50, 75, -1], [5,10, 15, 25, 50, 75, "All"]],
         "iDisplayLength": 25,
-	"columns"    : [
+		"columns"    : [
 		
 		{'data': 'coordinator'},
 		{'data': 'province'},

@@ -48,6 +48,10 @@ Route::post('update_information', 'DatabaseController@update_information')->name
 Route::get('/database/voters', 'DatabaseController@voters')->name('voters');
 Route::post('getVotersList', 'DatabaseController@getVotersList')->name('getVotersList');
 
+
+Route::post('/BarangayData', 'HomeController@BarangayData')->name('BarangayData');
+
+
 /*
 Route::get('/database/city', 'DatabaseController@city')->name('city');
 Route::get('/database/barangay', 'DatabaseController@barangay')->name('barangay');

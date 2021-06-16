@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\religions;
+use DateTime;
 
 class DatabaseController extends Controller
 {
@@ -22,16 +23,44 @@ class DatabaseController extends Controller
 		
 		//print_r($request->all());
 		
-		$update = \DB::table('votersinfomations') ->where('vin_number', $request->hiddenid)
-			->update( 
-				[ 
-				'address' => (@$request->modify_address != '') ? @$request->modify_address : "",
-				'mobile_number' => (@$request->modify_mobile_number != '') ? @$request->modify_mobile_number : "" ,
-				'status' =>   (@$request->modify_status != '') ? @$request->modify_status : "",
-				'remarks' =>  (@$request->modify_remarks != '') ? @$request->modify_remarks : "",
-				'religion' => (@$request->modify_religions != '') ? @$request->modify_religions : "",
-			]); 
+
 			
+
+		 $update = \DB::table('votersinfomations')
+			->where('id', $request->hiddenid)
+			->update([
+			
+					'address' => (@$request->modify_address != '') ? @$request->modify_address : "",
+					'mobile_number' => (@$request->modify_mobile_number != '') ? @$request->modify_mobile_number : "",
+					'status' =>   (@$request->modify_status != '') ? @$request->modify_status : "",
+					'remarks' =>  (@$request->modify_remarks != '') ? @$request->modify_remarks : "",
+					'religion' => (@$request->modify_religions != '') ? @$request->modify_religions : "",
+			]);
+			
+			
+			if(!empty($request->modify_dob))
+			{
+				$update = \DB::table('votersinfomations')
+				->where('id', $request->hiddenid)
+				->update([
+				
+					'dob' =>      \Carbon\Carbon::parse($request->modify_dob)->format('Y-m-d')
+				]);
+				
+			}
+			
+			if(!empty($request->modify_gender))
+			{
+				$update = \DB::table('votersinfomations')
+				->where('id', $request->hiddenid)
+				->update([
+				
+					'gender' =>    $request->modify_gender 
+				]);
+				
+			}
+
+
 		echo "save";	
 		
 	}
@@ -54,21 +83,87 @@ class DatabaseController extends Controller
 	}
 	
 	
+	function validateDate($date, $format = 'Y-m-d')
+	{
+		$d = DateTime::createFromFormat($format, $date);
+		// The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+		return $d && $d->format($format) === $date;
+	}
 	
-		public function getVotersList(Request $request){
-		
+	public function getVotersList(Request $request){
 		
 		//re-able ONLY_FULL_GROUP_BY
 		\DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
+
 		
-		$select ="t1.*,t2.name as religion,t2.id as religion_id, cities.name as city,  barangays.name as barangay,  precincts.name as precinct,  precincts.cluster as cluster  ";
-		$getallData = \DB::table('votersinfomations as t1')
+		$limit  	 = $request->input('length');
+		$start   	 = $request->input('start');
+		$dir 	     = $request->input('order.0.dir');
+		$search	 	 = $request->input('search.value');
+		$draw 		 = $request->input('draw');
+		
+		$select ="t1.*";
+		$totalData = \DB::table('votersinfomations as t1')
 		->select(\DB::raw($select))
-		->leftJoin('religions AS t2','t2.id','=','t1.religion')
-		->leftJoin('cities AS cities','cities.id','=','t1.city_municipality')
-		->leftJoin('barangays AS barangays','barangays.id','=','t1.barangay')
-		->leftJoin('precincts AS precincts','precincts.id','=','t1.precint_number')
-		->get();
+		->count();
+				
+		if(empty($search))
+		{            
+		
+
+				$select ="t1.*,t2.name as religion,t2.id as religion_id, cities.name as city,  barangays.name as barangay,  precincts.name as precinct,  precincts.cluster as cluster  ";
+				$getallData = \DB::table('votersinfomations as t1')
+				->select(\DB::raw($select))
+				->leftJoin('religions AS t2','t2.id','=','t1.religion')
+				->leftJoin('cities','cities.id','=','t1.city_municipality')
+				->leftJoin('barangays','barangays.id','=','t1.barangay')
+				->leftJoin('precincts','precincts.id','=','t1.precint_number')
+				->offset($start)
+				->limit($limit)
+				->get(); 
+				
+				$totalFiltered = $totalData;
+			
+		}
+		else 
+		{
+		
+			$select ="t1.*,t2.name as religion,t2.id as religion_id, cities.name as city,  barangays.name as barangay,  precincts.name as precinct,  precincts.cluster as cluster  ";
+			$getallData = \DB::table('votersinfomations as t1')
+			->select(\DB::raw($select))
+			->leftJoin('religions AS t2','t2.id','=','t1.religion')
+			->leftJoin('cities','cities.id','=','t1.city_municipality')
+			->leftJoin('barangays','barangays.id','=','t1.barangay')
+			->leftJoin('precincts','precincts.id','=','t1.precint_number')
+			->where('t1.id','LIKE',"%{$search}%")
+			->orWhere('t1.name', 'LIKE',"%{$search}%")
+			->orWhere('t1.dob', 'LIKE',"%{$search}%")
+			->orWhere('t1.address', 'LIKE',"%{$search}%")
+			->offset($start)
+			->limit($limit)
+			->get(); 
+		
+		    
+			$select ="t1.*,t2.name as religion,t2.id as religion_id, cities.name as city,  barangays.name as barangay,  precincts.name as precinct,  precincts.cluster as cluster  ";
+			$totalFiltered = \DB::table('votersinfomations as t1')
+			->select(\DB::raw($select))
+			->leftJoin('religions AS t2','t2.id','=','t1.religion')
+			->leftJoin('cities','cities.id','=','t1.city_municipality')
+			->leftJoin('barangays','barangays.id','=','t1.barangay')
+			->leftJoin('precincts','precincts.id','=','t1.precint_number')
+			->where('t1.id','LIKE',"%{$search}%")
+			->orWhere('t1.name', 'LIKE',"%{$search}%")
+			->orWhere('t1.dob', 'LIKE',"%{$search}%")
+			->orWhere('t1.address', 'LIKE',"%{$search}%")
+			->offset($start)
+			->limit($limit)
+			->count();
+		    
+
+		 
+		}
+		
+		
 		
 	
 		$data = array();
@@ -112,12 +207,9 @@ class DatabaseController extends Controller
 				$row['vin_number'] = '<a href="javascript:void(0)"  data-toggle="tooltip" data-placement="top" title="'.$dd->vin_number.'">'.$vin.'</a>';
 				$row['name'] =  $name;
 				$row['gender'] = $dd->gender;
-				$row['dob'] =   Carbon::parse(@$dd->dob)->format('m/d/Y');
-				$row['age'] = $dd->age;
+				$row['dob'] =   $this->validateDate(@$dd->dob) == true ?  Carbon::parse(@$dd->dob)->format('m/d/Y') :  "" ;
+				$row['age'] = $this->validateDate(@$dd->dob) == true ?  \Carbon\Carbon::parse(@$dd->dob)->diff(\Carbon\Carbon::now())->format('%y') :  "" ; 
 				$row['mobile_number'] = $dd->mobile_number;
-				
-				//$row['address'] = '<a href="javascript:void(0)"  data-toggle="tooltip" data-placement="top" title="'.$dd->address.'">'.$address.'</a>';
-				
 				$row['address'] = $address;
 				
 				
@@ -132,6 +224,8 @@ class DatabaseController extends Controller
 				$row['IS_IL_TAG'] = $dd->IS_IL_TAG;
 				
 				$row['complete_vin_number'] = $dd->vin_number;
+				
+				$row['user_id'] = $dd->id;
 				$row['complete_name'] = $dd->name;
 				$row['complete_address'] = $dd->address;
 				
@@ -150,8 +244,18 @@ class DatabaseController extends Controller
 			$data = [];
 		}
 		
-		$output = array("data" => $data);
-		return response()->json($output);
+		
+		$json_data = array(
+						"draw"            => intval($draw),  
+						"recordsTotal"    => intval($totalData),  
+						"recordsFiltered" => intval($totalFiltered), 
+						"data"            => $data,
+						);
+
+		
+		return response()->json($json_data);
+		
+		
 		
 		
 	}

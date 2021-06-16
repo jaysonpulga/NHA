@@ -21,11 +21,203 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+	 
+	 public function index(){
+		 
+		 //re-able ONLY_FULL_GROUP_BY
+       \DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
+		$arraymenu = array('parent_menu'=>'dashboard');	
+
+	/*
+	 //member by barangay
+		$select2 ="t1.*";
+		$barangays = \DB::table('view_barangay as t1')
+		->select(\DB::raw($select2))
+		->offset(0)->limit(30)->get();
+	 */
+	
+		
+	/*
+	 $coordinators = "(SELECT COUNT(coordinator_id) from coordinators  where barangay = t1.id) as coordinators";
+	   $leaders      = "(SELECT COUNT(leader_id) from leaders  where barangay = t1.id) as leaders";
+	   $members      = "(SELECT COUNT(b.id) from campaign_groups as a LEFT JOIN campaign_group_members as b ON a.group_id = b.group_id  where a.barangay = t1.id ) as members";
+	   $totalvoters  = "(SELECT COUNT(id) from votersinfomations  where barangay = t1.id) as total_voters";
+	
+	   //member by barangay
+		$select2 ="t1.id,t1.name , {$coordinators},{$leaders},{$members},{$totalvoters} ";
+		$barangays = \DB::table('barangays as t1')
+		->select(\DB::raw($select2))
+		->get();
+	   
+	   	
+		$databarangay = array();
+		foreach($barangays as  $barangay)
+		{
+			
+			$databarangay[] = array(
+			
+								'id' => $barangay->id,
+								//'name'=> $barangay->name .":".$barangay->total_voters,
+								'name'=> $barangay->name,
+								'coordinators' => $barangay->coordinators,
+								'leaders' => $barangay->leaders,
+								'members' => $barangay->members,
+								'total_voters' => $barangay->total_voters,
+								
+						);
+		}
+		
+		
+		echo "<pre>";
+		print_r($databarangay);
+		echo "</pre>";
+		exit;
+		*/
+
+
+		  //Total Voters and Projected Voters
+		   $member  = \DB::table('campaign_group_members')->count();
+		   $coordinators  = \DB::table('coordinators')->count();
+		   $leaders  = \DB::table('leaders')->count();
+		   $TotalprojectedVoters = $coordinators + $leaders + $member ;
+		   $TotalVoters  = \DB::table('votersinfomations')->count();
+
+		//member by age
+		$select ="t1.*";
+		$ageData = \DB::table('view_voters_by_age as t1')
+		->select(\DB::raw($select))
+		->first();
+
+		
+		//get all voters by gender
+		$select ="t1.*";
+		$allgender = \DB::table('voter_gender as t1')
+		->select(\DB::raw($select))
+		->get();
+
+		//get member voters by gender
+		$select ="t1.*";
+		$allmembergender = \DB::table('voter_member_gender as t1')
+		->select(\DB::raw($select))
+		->get();
+
+		$gender = array(
+						'Male' => $allgender[2]->total_number, 
+						'Female' => $allgender[1]->total_number,
+						'voterMemberMale' => $allmembergender[2]->total_number,
+						'voterMemberFemale' => $allmembergender[1]->total_number,
+						);
+
+
+		//get member voters by gender
+		$select ="t1.*";
+		$allmemberReligion = \DB::table('view_voters_by_religion as t1')
+		->select(\DB::raw($select))
+		->get();
+
+
+		$background_colors = array('#4698d4', '#81ae0a', '#e82b96', '#01a096', '#FF3838');
+		$i = 0;
+		$religions = array();
+		foreach($allmemberReligion  as $data)
+		{	
+			
+			
+				$religions[$data->religion_name] = array(
+					
+														'count' => $data->total_number,
+														'backgroundColor' => $background_colors[$i],
+														'percentage' => number_format (($data->total_number * 100) / $TotalVoters ,2),
+												);
+			
+			$i++;
+		}
+
+	
+
+
+        return view( 'dashboard', 
+							$arraymenu,
+							array( 
+								'TotalVoters' => $TotalVoters, 
+								'TotalprojectedVoters' => $TotalprojectedVoters,
+								'ChartAge' => $ageData,
+								'ChartSex'=> (object)$gender,
+								'dataReligion' => $religions,
+							)
+				);
+		 
+		 
+		 
+	 }
+	 
+	 
+	 
+	 public function BarangayData(Request $request)
+	 {
+		 
+		// member by barangay
+		$select2 ="t1.*";
+		$barangays = \DB::table('view_barangay as t1')
+		->select(\DB::raw($select2))
+		->offset(0)->limit(30)->get();
+		
+			return response()->json($barangays);
+		
+	 }
+	 
+    public function index2()
     {
 		
 		//re-able ONLY_FULL_GROUP_BY
        \DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
+	   
+	   
+	   
+	   
+	     // GET FEMALE AND MALE
+	    $voterMale  = \DB::table('votersinfomations')->where('gender', ['M'])->count();	
+	    $voterFemale  = \DB::table('votersinfomations')->where('gender', ['F'])->count();	
+		
+		
+		
+		  //Voters Gender
+		$select2 ="t1.*";
+		$getGenderVoters = \DB::table('votersinfomations as t1')
+		->select(\DB::raw($select2))
+		->Join('campaign_group_members AS t2','t2.user_id','=','t1.id')
+		->get();
+	
+		$genderVoters = array();
+		foreach($getGenderVoters  as $data)
+		{	
+			$genderVoters[$data->gender][] = $data;
+			
+		}
+		
+		if(@$genderVoters['M'] && count(@$genderVoters['M']) > 0)
+		{
+			$voterMemberMale  = count(@$genderVoters['M']);
+		}
+		else{
+			$voterMemberMale  = 0;
+		}
+	
+		
+		if(@$genderVoters['F'] && count(@$genderVoters['F']) > 0)
+		{
+			$voterMemberFemale  = count(@$genderVoters['F']);
+		}
+		else{
+			$voterMemberFemale  = 0;
+		}
+		
+
+		
+		$gender = array('Male' => $voterMale , 'Female' => $voterFemale, 'voterMemberMale' => $voterMemberMale, 'voterMemberFemale' => $voterMemberFemale );
+		
+		
+	
 	   
 	   //Total Voters and Projected Voters
 	   $TotalVoters  = \DB::table('votersinfomations')->count();
@@ -83,7 +275,7 @@ class HomeController extends Controller
 	   $coordinators = "(SELECT COUNT(coordinator_id) from coordinators  where barangay = t1.id) as coordinators";
 	   $leaders      = "(SELECT COUNT(leader_id) from leaders  where barangay = t1.id) as leaders";
 	   $members      = "(SELECT COUNT(b.id) from campaign_groups as a LEFT JOIN campaign_group_members as b ON a.group_id = b.group_id  where a.barangay = t1.id ) as members";
-	   $totalvoters  = "(SELECT COUNT(vin_number) from votersinfomations  where barangay = t1.id) as total_voters";
+	   $totalvoters  = "(SELECT COUNT(id) from votersinfomations  where barangay = t1.id) as total_voters";
 	
 	   //member by barangay
 		$select2 ="t1.id,t1.name , {$coordinators},{$leaders},{$members},{$totalvoters} ";
@@ -99,7 +291,8 @@ class HomeController extends Controller
 			$databarangay[] = array(
 			
 								'id' => $barangay->id,
-								'name'=> $barangay->name .":".$barangay->total_voters,
+								//'name'=> $barangay->name .":".$barangay->total_voters,
+								'name'=> $barangay->name,
 								'coordinators' => $barangay->coordinators,
 								'leaders' => $barangay->leaders,
 								'members' => $barangay->members,
@@ -163,48 +356,6 @@ class HomeController extends Controller
 		}
 		
 	
-	   
-	   // GET FEMALE AND MALE
-	    $voterMale  = \DB::table('votersinfomations')->where('gender', ['M'])->count();	
-	    $voterFemale  = \DB::table('votersinfomations')->where('gender', ['F'])->count();	
-		
-		
-		
-		  //Voters Gender
-		$select2 ="t1.*";
-		$getGenderVoters = \DB::table('votersinfomations as t1')
-		->select(\DB::raw($select2))
-		->Join('campaign_group_members AS t2','t2.vin_number','=','t1.vin_number')
-		->get();
-	
-		$genderVoters = array();
-		foreach($getGenderVoters  as $data)
-		{	
-			$genderVoters[$data->gender][] = $data;
-			
-		}
-		
-		$voterMemberMale  = count($genderVoters['M']);
-		$voterMemberFemale  = count($genderVoters['F']);
-		
-		$gender = array('Male' => $voterMale , 'Female' => $voterFemale, 'voterMemberMale' => $voterMemberMale, 'voterMemberFemale' => $voterMemberFemale );
-		
-		/*
-		echo "<pre>";
-		print_r(count($genderVoters['F']));
-		print_r(count($genderVoters['M']));
-		echo "</pre>";
-		exit;
-		*/
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		$age  = \DB::table('votersinfomations')->select('*')->get();		
 
@@ -256,17 +407,17 @@ class HomeController extends Controller
 					);
 
 		
-        return view( 'dashboard', array( 
-					'ChartSex'=> (object)$gender , 
-					'ChartAge' => (object)$ageData ,
-					'TotalVoters' => $TotalVoters, 
-					'TotalprojectedVoters' => $TotalprojectedVoters, 
-					'religions' => $religions, 
-					'dataReligion' => ($dataReligion), 
-					'MonthChart' => $getMonth,
-					'barangays' => $databarangay,
-					
-					),
+        return view( 'dashboard', 
+							array( 
+								'ChartSex'=> (object)$gender , 
+								'ChartAge' => (object)$ageData ,
+								'TotalVoters' => $TotalVoters, 
+								'TotalprojectedVoters' => $TotalprojectedVoters, 
+								'religions' => $religions, 
+								'dataReligion' => ($dataReligion), 
+								'MonthChart' => $getMonth,
+								'barangays' => $databarangay,
+							),
 					$arraymenu
 				);
     }

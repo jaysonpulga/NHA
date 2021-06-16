@@ -657,19 +657,19 @@ class Report_ProjectedVotersController extends Controller
 					$div .="</tr>";
 					
 					$coordinators = "(SELECT COUNT(coordinator_id) from coordinators as coor
-										LEFT JOIN  votersinfomations as v2 ON v2.vin_number = coor.vin_number
+										LEFT JOIN  votersinfomations as v2 ON v2.id = coor.user_id
 										where v2.precint_number = t1.id 
 									 ) as coordinators";
 									  
 					$leaders 	  = "(SELECT COUNT(leader_id) from leaders as lead
-										LEFT JOIN  votersinfomations as v2 ON v2.vin_number = lead.vin_number
+										LEFT JOIN  votersinfomations as v2 ON v2.id = lead.user_id
 										where v2.precint_number = t1.id 
 									) as leaders";
 					
 					
 					$members      = "(SELECT COUNT(camp_member.id) from campaign_groups as camp 
 									   LEFT JOIN  campaign_group_members as camp_member ON camp.group_id = camp_member.group_id
-									   LEFT JOIN  votersinfomations as v2 ON v2.vin_number = camp_member.vin_number
+									   LEFT JOIN  votersinfomations as v2 ON v2.id = camp_member.user_id
 									  where v2.precint_number = t1.id 
 									 ) as members ";
 					
