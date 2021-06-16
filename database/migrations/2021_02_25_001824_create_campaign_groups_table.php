@@ -16,7 +16,7 @@ class CreateCampaignGroupsTable extends Migration
         Schema::create('campaign_groups', function (Blueprint $table) {
             $table->id();
 			$table->string('group_id');
-			$$table->integer('city');
+			$table->integer('city');
 			$table->integer('barangay');
 			$table->integer('coordinator');
 			$table->integer('leader');
